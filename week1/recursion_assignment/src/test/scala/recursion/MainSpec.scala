@@ -22,7 +22,7 @@ class MainSpec extends FlatSpec with Matchers {
         shouldEqual List('(', '(', ')', '(', ')', ')'))
   } 
 
-  ("Main.checkParensBalancing((if (zero? x) max (/ 1 x)))" 
+  ("Main.checkParensBalancing('(if (zero? x) max (/ 1 x))')" 
         should "return true") in {
     
     (Main.checkParensBalancing("(if (zero? x) max (/ 1 x))") 

@@ -27,12 +27,10 @@ object Main {
           else isBalanced(xs, true, nOpeningParens - 1)
         }
       }
-      
-      println(isBalanced(phrase.toList, false, 0))
-      isBalanced(phrase.toList, false, 0)
     
     }
 
+    isBalanced(getParens(phrase.toList), false, 0)
   }
 
   def getParens(phrase: List[Char]) ={
