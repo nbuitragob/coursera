@@ -17,6 +17,24 @@ object Main {
 
   }
 
+  def checkParensBalancing(phrase: String): Any = {
+    def isBalanced(phrase: List[Char], isClosing: Boolean, nOpeningParens: Int): Boolean = {
+      phrase match{
+        case Nil => isClosing && nOpeningParens == 0
+        case x :: xs => {
+          if((x != '(' && nOpeningParens == 0) || nOpeningParens < 0) false
+          else if(x == '(') isBalanced(xs, false, nOpeningParens + 1)
+          else isBalanced(xs, true, nOpeningParens - 1)
+        }
+      }
+      
+      println(isBalanced(phrase.toList, false, 0))
+      isBalanced(phrase.toList, false, 0)
+    
+    }
+
+  }
+
   def getParens(phrase: List[Char]) ={
     def selectParens(current_phrase: List[Char], ans: List[Char]): List[Char] ={
       if(current_phrase.isEmpty) ans 
@@ -27,7 +45,7 @@ object Main {
     def isParens(x: Char)=
       x == '(' || x == ')'
 
-    selectParens(phrase, Nil).mkString
+    selectParens(phrase, Nil)
   
   }
   

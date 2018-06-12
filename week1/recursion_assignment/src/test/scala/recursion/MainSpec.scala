@@ -19,7 +19,15 @@ class MainSpec extends FlatSpec with Matchers {
         should "return (()())") in {
     
     (Main.getParens("(if (zero? x) max (/ 1 x))".toList) 
-        shouldEqual "(()())")
+        shouldEqual List('(', '(', ')', '(', ')', ')'))
   } 
+
+  ("Main.checkParensBalancing((if (zero? x) max (/ 1 x)))" 
+        should "return true") in {
+    
+    (Main.checkParensBalancing("(if (zero? x) max (/ 1 x))") 
+        shouldEqual true)
+  }
+
 }
 
