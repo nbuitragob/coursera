@@ -16,7 +16,7 @@ object Lecture1_5 {
     else closeRoot(x, improve(x,guess))
 
   def isGoodEnough(x: Double, guess: Double) =
-    abs(guess * guess - x) / x < 0.001
+    abs((guess * guess - x) /x)  < 0.001
 
   def improve(x: Double, guess: Double) =
     (guess + x/guess)/2
