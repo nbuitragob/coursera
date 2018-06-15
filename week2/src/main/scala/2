@@ -1,0 +1,22 @@
+package lectures
+
+import scala.math.{abs, BigDecimal}
+
+
+object Lecture2_3{
+  val tolerance = 0.00001
+  def fixedPoint(improve: Double => Double, guess: Double): Double = {
+    def isCloseEnough(x: Double, y: Double): Double = 
+      abs((x - y) / x) < tolerance
+    
+    def iterator(guess: Double): Double = {
+      val next = improve(guess)
+      if (isGoodEnough(guess, next)) guess
+      else iterator(guess, next)
+    }
+    
+    iterator(1.0)
+     
+ }
+
+}

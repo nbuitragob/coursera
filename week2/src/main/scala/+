@@ -1,0 +1,26 @@
+package lectures
+
+import scala.math.{abs, BigDecimal}
+
+
+object Lecture2_3{
+  val tolerance = 0.00001
+  def fixedPoint(improve: Double => Double, guess: Double): Double = {
+    def isGoodEnough(x: Double, y: Double): Boolean = 
+      abs((x - y) / x) < tolerance
+    
+    def iterator(guess: Double): Double = {
+      val next = improve(guess)
+      if (isGoodEnough(guess, next)) guess
+      else iterator(next)
+    }
+  
+    setPrecision(iterator(1.0, 5)
+    ans/100000.0
+    //BigDecimal(ans).setScale(0, BigDecimal.RoundingMode.FLOOR).toDouble/100000
+  }
+  
+  def setPrecision(value: Double, precision: Int): Double =
+    (value*10*precision).toInt/(10.0*precision)
+
+}
