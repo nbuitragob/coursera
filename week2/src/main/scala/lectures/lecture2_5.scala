@@ -3,14 +3,12 @@ package lectures
 
 object Lecture2_5{
   def main(args: Array[String]) = {
-    var g = new Rational(1,2)
-    val h = new Rational(5,6)
-    val z = new Rational(3,4)
+    var g = new Rational(1,3)
+    val h = new Rational(5,7)
+    val z = new Rational(3,2)
     println("G = " + g.toString)
     println("H = " + h.toString)
-    g.substract(h)
-    g.substract(z)
-    println("G + H = " + g.toString)
+    println(g.substract(h).substract(z))
 
   }  
 }
@@ -19,13 +17,14 @@ class Rational(var x: Int, var y: Int){
   def numerator = x
   def denominator = y
 
-  def add(z: Rational): Unit  = {
+  def add(z: Rational): Rational  = {
     x = numerator * z.denominator + z.numerator * denominator
     y = denominator * z.denominator
-    val gcd1 = gcd
+    new Rational(x, y)
+    /*val gcd1 = gcd
     x = x / gcd1
     y = y / gcd1
-    checkSign
+    checkSign*/
   }
 
   def neg: Rational = 
@@ -36,13 +35,14 @@ class Rational(var x: Int, var y: Int){
     else new Rational(y, x)
 
 
-  def multiply(z: Rational): Unit = {
+  def multiply(z: Rational): Rational = {
     x = x * z.denominator
     y = y * z.numerator
-    checkSign
+    //checkSign
+    new Rational(x, y)
   }
 
-  def gcd: Int = {
+  private def gcd: Int = {
     def iterator(num: Int, dem: Int): Int = {
       if(dem == 0) num 
       else iterator(dem, num % dem) 
@@ -53,7 +53,7 @@ class Rational(var x: Int, var y: Int){
 
   }
 
-  def substract(z: Rational): Unit = {
+  def substract(z: Rational): Rational = {
     add(z.neg)
   }
 
