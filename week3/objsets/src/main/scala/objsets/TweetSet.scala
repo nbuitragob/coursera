@@ -1,6 +1,6 @@
 package objsets
 
-import TweetReader._
+import javax.swing.plaf.nimbus.NimbusLookAndFeel
 
 /**
  * A class to represent tweets.
@@ -104,13 +104,15 @@ abstract class TweetSet {
    * This method takes a function and applies it to every element in the set.
    */
   def foreach(f: Tweet => Unit): Unit
+
+  def isEmpty: Boolean
 }
 
 class Empty extends TweetSet {
-	def mostRetweeted: NoSuchTweetException = 
+  def mostRetweeted: Nothing = 
     throw new NoSuchElementException("trying to get most retweeted from an Empty TweetSet")
 
-	def filter(p: Tweet => Boolean): TweetSet = new Empty	
+  def filter(p: Tweet => Boolean): TweetSet = new Empty	
 
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = acc
   
@@ -126,30 +128,32 @@ class Empty extends TweetSet {
 
   def foreach(f: Tweet => Unit): Unit = ()
 
-	def union(that: TweetSet): TweetSet = that
+  def union(that: TweetSet): TweetSet = that
 
-	def isEmpty = true
+  def isEmpty = true
+
+  def descendingByRetweet: TweetList = Nil
 }
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
-	def mostRetweeted: Tweet = /*{
-		if(left.isEmpty && right.isEmpty) elem
-		else if(left.isEmpty){
-			val topRight = right.mostRetweeted
-			if(elem.retweets > topRight.retweets) elem
-			else topRight
-		} else if(right.isEmpty){
-			val topLeft = left.mostRetweeted
-			if(elem.retweets > topLeft.retweets) elem
-			else topLeft
-		} else List(elem, left.mostRetweeted, right.mostRetweeted).maxBy(_.retweets)
-	}*/|
+  def descendingByRetweet: TweetList = {
+    val topTweet = mostRetweeted
+    new Cons(topTweet, remove(topTweet).descendingByRetweet)
+  }
 
-	def filter(p: Tweet => Boolean): TweetSet = filterAcc(p, new Empty)
+  def isEmpty = false
+
+  def mostRetweeted: Tweet =
+    if(left.isEmpty && right.isEmpty) elem
+    else if(left.isEmpty) List(elem, right.mostRetweeted).maxBy(_.retweets)
+    else if(right.isEmpty) List(elem, left.mostRetweeted).maxBy(_.retweets)
+    else List(elem, left.mostRetweeted, right.mostRetweeted).maxBy(_.retweets)
+
+  def filter(p: Tweet => Boolean): TweetSet = filterAcc(p, new Empty)
 
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = 
-		if(p(elem)) left.filter(p) union (right.filter(p) union (acc incl elem))
-		else (left.filter(p) union right.filter(p)) union acc
+	  if(p(elem)) left.filter(p) union (right.filter(p) union (acc.incl(elem)))
+	  else (left.filter(p) union right.filter(p)) union acc
     
   /**
    * The following methods are already implemented
@@ -177,7 +181,7 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     right.foreach(f)
   }
 
-	def union(that: TweetSet): TweetSet = left union (right union that.incl(elem))
+  def union(that: TweetSet): TweetSet = left union (right union that.incl(elem))
 }
 
 trait TweetList {
@@ -206,14 +210,15 @@ object GoogleVsApple {
   val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
   val apple = List("ios", "iOS", "iphone", "iPhone", "ipad", "iPad")
 
-  lazy val googleTweets: TweetSet = ???
-  lazy val appleTweets: TweetSet = ???
+  val allTweets = TweetReader.allTweets
+  lazy val googleTweets: TweetSet = allTweets.filter(tweet => google.exists(smartphone => tweet.text.contains(smartphone)))
+  lazy val appleTweets: TweetSet = allTweets.filter(tweet => apple.exists(smartphone => tweet.text.contains(smartphone)))
   
   /**
    * A list of all tweets mentioning a keyword from either apple or google,
    * sorted by the number of retweets.
    */
-  lazy val trending: TweetList = ???
+  lazy val trending: TweetList = (googleTweets union appleTweets) descendingByRetweet
 }
 
 object Main extends App {
